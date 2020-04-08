@@ -2,20 +2,17 @@
 
 class LocationsController < ApplicationController
   def show
-    render json: {
-      text: response_text
-    }
+    render json: ratio
   end
 
-  def response_text
-    return 'no location selected' unless permitted_params[:location].present?
-
-    Location::RatioForLocation.call(permitted_params)
+  def ratio
+    @location = Location.find_by! slug: location
+    Location::RatioForLocation.call(@location, params[:transport])
   end
 
   private
 
-  def permitted_params
-    params.permit(:location, :transport)
+  def location
+    params.fetch(:location)
   end
 end

@@ -1,20 +1,17 @@
 # frozen_string_literal: true
 
 class Location::RatioForLocation < Callable
-  def initialize(params)
-    @location_param = params[:location]
-    @transport_param = params[:transport]
-  end
+  param :location
+  param :transport, default: proc { 'true' }
 
   def call
-    return 'location not found' unless location.present?
-
-    Location::SpeedOnSpread.call(location.density_of_population, @transport_param)
+    transport_validation_error unless @transport.in? %w[true false]
+    Location::SpeedOnSpread.call(@location.density_of_population, @transport)
   end
 
-    private
+  private
 
-  def location
-    Location.find_by slug: @location_param
+  def transport_validation_error
+    raise ArgumentError, 'Transport not a boolean'
   end
-  end
+end
