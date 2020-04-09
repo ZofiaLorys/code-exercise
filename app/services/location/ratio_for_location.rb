@@ -5,13 +5,13 @@ class Location::RatioForLocation < Callable
   param :transport, default: proc { 'true' }
 
   def call
-    transport_validation_error unless @transport.in? %w[true false]
-    Location::SpeedOnSpread.call(@location.density_of_population, @transport)
+    transport_validation_error unless transport.in? %w[true false]
+    Location::SpeedOnSpread.call(location.density_of_population, transport)
   end
 
   private
 
   def transport_validation_error
-    raise ArgumentError, 'Transport not a boolean'
+    raise InvalidTypeError
   end
 end
